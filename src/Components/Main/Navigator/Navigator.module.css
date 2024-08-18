@@ -1,0 +1,17 @@
+.buttonsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.NavLink {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.NavButton {
+    width: 100%;
+}
