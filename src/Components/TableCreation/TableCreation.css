@@ -1,0 +1,60 @@
+.table-creation-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 32px;
+}
+
+.toolbar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding-top: 10px;
+  padding-left: 250px;
+  padding-right: 250px;
+}
+
+.field-linking-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.field-linking-header {
+  margin: 10px;
+}
+
+.field-linking-header > * {
+  margin: 30px;
+}
+
+.field-linking {
+  width: 100%;
+}
+
+.dropdown-container > * {
+    margin-top: 10px;
+}
+
+.dropdown-label-container > * {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+}
+
+.center-text{
+    text-align: center;
+}
+
+.p-dropdown > * {
+    font-size: 26px;
+}
+
+.p-button > * {
+    font-size: 20px;
+}

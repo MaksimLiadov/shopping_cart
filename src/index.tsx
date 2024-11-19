@@ -9,6 +9,7 @@ import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import Main from './Components/Main/Main';
 import BasketContainer from './Components/Basket/BasketContainer/BasketContainer'
+import TableCreation from './Components/TableCreation/TableCreation'
 import './index.css';
 
 const root = ReactDOM.createRoot(
@@ -22,6 +23,7 @@ root.render(
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/basket" element={<BasketContainer />} />
+            <Route path="/tableCreation" element={<TableCreation />}/>
           </Routes>
         </BrowserRouter>
       </Provider>

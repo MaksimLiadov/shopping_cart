@@ -31,7 +31,6 @@ const ProductTableActions = (props) => {
 
     return (
         <div className="productTableActionsContainer">
-            {/* <Button label="*" /> */}
             <InputNumber className="basketInputNumber" inputId="integeronly" value={amount} onValueChange={(e) => setAmount(e.value)} />
             <Button label="+" onClick={plusOne} />
             <Button label="-" onClick={minusOne} />
