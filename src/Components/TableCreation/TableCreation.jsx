@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { Dropdown } from "primereact/dropdown";
-import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import "primeicons/primeicons.css";
+import * as XLSX from "xlsx";
 import "./TableCreation.css";
 
 const TableCreation = () => {
   const [tableTemplateData, setTableTemplateData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [excelData, setExcelData] = useState(null);
+  const [fileSelected, setFileSelected] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [userTableOptions, setUserTableOptions] = useState([]);
+
+  const toast = React.useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/database/structure");
+        const response = await fetch(
+          "http://localhost:5000/api/database/structure"
+        );
         const result = await response.json();
         setTableTemplateData(result);
       } catch (error) {
@@ -25,15 +34,20 @@ const TableCreation = () => {
     fetchData();
   }, []);
 
-  console.log(tableTemplateData);
-
   let fieldsForTable = ["name", "price", "quantity"];
 
-  const userTableOptions = [
-    { label: "Price", value: 1 },
-    { label: "Name", value: 2 },
-    { label: "Quantity", value: 3 },
-  ];
+  const userTableOptionsFill = (fields) => {
+    let options = [];
+    let counter = 1;
+
+    for (let field in fields[0]) {
+      options.push({ label: field, value: counter });
+      counter++;
+    }
+
+    setUserTableOptions(options);
+    console.log(options);
+  };
 
   const tableTemplateOptions = [
     { label: "Продукты", value: 1 },
@@ -56,10 +70,74 @@ const TableCreation = () => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        setExcelData(jsonData);
+        setFileSelected(true);
+        userTableOptionsFill(jsonData);
+
+        setToastMessage("Файл успешно загружен");
+        toast.current.show({
+          severity: "success",
+          summary: "Успех",
+          detail: "Файл успешно загружен",
+          life: 3000,
+        });
+
+        console.log(jsonData);
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      setFileSelected(false);
+
+      setToastMessage("Файл не загружен");
+      toast.current.show({
+        severity: "error",
+        summary: "Ошибка",
+        detail: "Файл не был загружен",
+        life: 3000,
+      });
+    }
+  };
+
   return (
     <div className="table-creation-container">
+      <Toast ref={toast} />
       <div className="toolbar">
-        <Button label="Загрузить таблицу из Excel" />
+        <div>
+          {fileSelected ? (
+            <i
+              className="pi pi-check icon"
+              style={{ color: "green", marginLeft: "10px" }}
+            ></i>
+          ) : (
+            <i
+              className="pi pi-times icon"
+              style={{ color: "red", marginLeft: "10px" }}
+            ></i>
+          )}
+
+          <label class="input-file">
+            <input
+              type="file"
+              name="file"
+              accept=".xlsx, .xls"
+              onChange={handleFileChange}
+            />
+            <span class="input-file-btn">Выберите файл</span>
+          </label>
+        </div>
+
         <div className="table-template-selection">
           <Dropdown
             value={selectedTableTemplate}

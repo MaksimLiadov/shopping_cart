@@ -11,10 +11,12 @@
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
   padding-top: 10px;
-  padding-left: 250px;
-  padding-right: 250px;
+}
+
+.toolbar > *{
+  margin-right: 20px;
 }
 
 .field-linking-container {
@@ -57,4 +59,58 @@
 
 .p-button > * {
     font-size: 20px;
+}
+
+.input-file {
+	position: relative;
+	display: inline-block;
+}
+.input-file-btn {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	outline: none;
+	text-decoration: none;
+	font-size: 26px;
+	vertical-align: middle;
+	color: rgb(255 255 255);
+	text-align: center;
+	border-radius: 4px;
+	background-color: #6366f1;
+	padding: 10px 20px;
+	box-sizing: border-box;
+	border: none;
+	margin: 0;
+	transition: background-color 0.2s;
+}
+
+.input-file-text {
+	padding: 0 10px;
+	line-height: 40px;
+	display: inline-block;
+}
+
+.input-file input[type=file] {
+	position: absolute;
+	z-index: -1;
+	opacity: 0;
+	display: block;
+	width: 0;
+	height: 0;
+} 
+
+.input-file input[type=file]:focus + .input-file-btn {
+	box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+
+.input-file:hover .input-file-btn {
+	background-color: #696bf7;
+}
+.input-file:active .input-file-btn {
+	background-color: #5e61f5;
+}
+
+.icon{
+  margin: 10px;
 }
