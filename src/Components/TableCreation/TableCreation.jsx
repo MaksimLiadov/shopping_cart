@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
+import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import * as XLSX from "xlsx";
 import "./TableCreation.css";
@@ -9,6 +11,20 @@ const TableCreation = () => {
   let tablesTemplates = {
     Мебель: ["name", "material", "color"],
     Товары: ["name", "price", "description"],
+    Много_полей: [
+      "name",
+      "price",
+      "description",
+      "name",
+      "price",
+      "description",
+      "name",
+      "price",
+      "description",
+      "name",
+      "price",
+      "description",
+    ],
   };
 
   const [tableTemplateData, setTableTemplateData] = useState(tablesTemplates);
@@ -19,14 +35,13 @@ const TableCreation = () => {
   const [selectedFields, setSelectedFields] = useState([]);
 
   const [fieldsForTable, setFieldsForTable] = useState([]);
+  const [allFieldsForTableFilled, setAllFieldsForTableFilled] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [excelData, setExcelData] = useState(null);
   const [fileSelected, setFileSelected] = useState(false);
-
-  const [toastMessage, setToastMessage] = useState("");
 
   const toast = React.useRef(null);
 
@@ -109,6 +124,19 @@ const TableCreation = () => {
     }));
   };
 
+  useEffect(() => {
+    let selectedFieldsLength = 0;
+    for (let field in selectedFields) {
+      selectedFieldsLength++;
+    }
+
+    const allFilled =
+      selectedFieldsLength === fieldsForTable.length &&
+      selectedFieldsLength > 0;
+
+    setAllFieldsForTableFilled(allFilled);
+  }, [selectedFields, fieldsForTable]);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
@@ -125,7 +153,6 @@ const TableCreation = () => {
         setFileSelected(true);
         userTableOptionsFill(jsonData);
 
-        setToastMessage("Файл успешно загружен");
         toast.current.show({
           severity: "success",
           summary: "Успех",
@@ -135,9 +162,19 @@ const TableCreation = () => {
       };
       reader.readAsArrayBuffer(file);
     } else {
+      if (excelData) {
+        toast.current.show({
+          severity: "error",
+          summary: "Ошибка",
+          detail: "Не удалось загрузить новый файл",
+          life: 3000,
+        });
+
+        return;
+      }
+
       setFileSelected(false);
 
-      setToastMessage("Файл не загружен");
       toast.current.show({
         severity: "error",
         summary: "Ошибка",
@@ -208,6 +245,15 @@ const TableCreation = () => {
             </div>
           ))}
         </div>
+      </div>
+      <div className="navigation">
+        {fileSelected && allFieldsForTableFilled ? (
+          <Link to="/orderBuilder">
+            <Button label="Далее" />
+          </Link>
+        ) : (
+          <Button label="Далее" disabled />
+        )}
       </div>
     </div>
   );

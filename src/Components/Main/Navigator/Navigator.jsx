@@ -8,7 +8,7 @@ const Navigator = () => {
     const basketLength = useSelector((state) => state.basket.basketItems.length);
     return (
         <div className={styles.buttonsContainer}>
-            <Link className={styles.NavLink} to="/">
+            <Link className={styles.NavLink} to="/catalog">
                 <Button className={styles.NavButton} label="Каталог" />
             </Link>
             <Link className={styles.NavLink} to="/basket">

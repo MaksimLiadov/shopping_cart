@@ -15,7 +15,7 @@
   padding-top: 10px;
 }
 
-.toolbar > *{
+.toolbar > * {
   margin-right: 20px;
 }
 
@@ -23,6 +23,8 @@
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: auto auto;
+  overflow: auto;
+  max-height: 70%;
   margin-top: 20px;
   gap: 20px;
 }
@@ -40,77 +42,86 @@
 }
 
 .dropdown-container > * {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .dropdown-label-container > * {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: center;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
 }
 
-.center-text{
-    text-align: center;
+.center-text {
+  text-align: center;
 }
 
 .p-dropdown > * {
-    font-size: 26px;
+  font-size: 26px;
+}
+
+.p-dropdown.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .p-button > * {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 .input-file {
-	position: relative;
-	display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 .input-file-btn {
-	position: relative;
-	display: inline-block;
-	cursor: pointer;
-	outline: none;
-	text-decoration: none;
-	font-size: 26px;
-	vertical-align: middle;
-	color: rgb(255 255 255);
-	text-align: center;
-	border-radius: 4px;
-	background-color: #6366f1;
-	padding: 10px 20px;
-	box-sizing: border-box;
-	border: none;
-	margin: 0;
-	transition: background-color 0.2s;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+  font-size: 26px;
+  vertical-align: middle;
+  color: rgb(255 255 255);
+  text-align: center;
+  border-radius: 4px;
+  background-color: #6366f1;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  border: none;
+  margin: 0;
+  transition: background-color 0.2s;
 }
 
 .input-file-text {
-	padding: 0 10px;
-	line-height: 40px;
-	display: inline-block;
+  padding: 0 10px;
+  line-height: 40px;
+  display: inline-block;
 }
 
-.input-file input[type=file] {
-	position: absolute;
-	z-index: -1;
-	opacity: 0;
-	display: block;
-	width: 0;
-	height: 0;
-} 
-
-.input-file input[type=file]:focus + .input-file-btn {
-	box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+.input-file input[type="file"] {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+  display: block;
+  width: 0;
+  height: 0;
 }
 
+.input-file input[type="file"]:focus + .input-file-btn {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
 
 .input-file:hover .input-file-btn {
-	background-color: #696bf7;
+  background-color: #696bf7;
 }
 .input-file:active .input-file-btn {
-	background-color: #5e61f5;
+  background-color: #5e61f5;
 }
 
-.icon{
+.icon {
   margin: 10px;
+}
+
+.navigation {
+  margin-top: 20px;
+  margin-left: 600px;
 }
