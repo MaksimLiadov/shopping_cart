@@ -6,35 +6,76 @@ import * as XLSX from "xlsx";
 import "./TableCreation.css";
 
 const TableCreation = () => {
-  const [tableTemplateData, setTableTemplateData] = useState([]);
+  let tablesTemplates = {
+    Мебель: ["name", "material", "color"],
+    Товары: ["name", "price", "description"],
+  };
+
+  const [tableTemplateData, setTableTemplateData] = useState(tablesTemplates);
+  const [tableTemplateOptions, setTableTemplateOptions] = useState([]);
+  const [selectedTableTemplate, setSelectedTableTemplate] = useState(null);
+
+  const [userTableOptions, setUserTableOptions] = useState([]);
+  const [selectedFields, setSelectedFields] = useState([]);
+
+  const [fieldsForTable, setFieldsForTable] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [excelData, setExcelData] = useState(null);
   const [fileSelected, setFileSelected] = useState(false);
+
   const [toastMessage, setToastMessage] = useState("");
-  const [userTableOptions, setUserTableOptions] = useState([]);
 
   const toast = React.useRef(null);
 
+  //для api
+  const setTablesTemplateOptions = (data) => {
+    let tablesTemplatesNames = [];
+    let counter = 1;
+
+    for (let field in data) {
+      tablesTemplatesNames.push({ label: field, value: counter });
+      counter++;
+    }
+
+    setTableTemplateOptions(tablesTemplatesNames);
+  };
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         "http://localhost:5000/api/database/structure"
+  //       );
+  //       const result = await response.json();
+  //       setTableTemplateData(result);
+  //       setTableTemplateOptions(result);
+  //     } catch (error) {
+  //       setError(error.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  // Пока api не заработает
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/database/structure"
-        );
-        const result = await response.json();
-        setTableTemplateData(result);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    let tablesTemplatesNames = [];
+    let counter = 1;
 
-    fetchData();
+    for (let field in tableTemplateData) {
+      tablesTemplatesNames.push({ label: field, value: counter });
+      counter++;
+    }
+
+    setTableTemplateOptions(tablesTemplatesNames);
+
+    return () => {};
   }, []);
-
-  let fieldsForTable = ["name", "price", "quantity"];
 
   const userTableOptionsFill = (fields) => {
     let options = [];
@@ -46,24 +87,22 @@ const TableCreation = () => {
     }
 
     setUserTableOptions(options);
-    console.log(options);
   };
 
-  const tableTemplateOptions = [
-    { label: "Продукты", value: 1 },
-    { label: "Мебель", value: 2 },
-    { label: "ПК", value: 3 },
-  ];
+  const handleDropdownTableTemplateChange = (selectedTemplateIndex) => {
+    let comparedFields = [];
 
-  const initialState = fieldsForTable.reduce((acc, field) => {
-    acc[field] = null;
-    return acc;
-  }, {});
+    const templateKeys = Object.keys(tablesTemplates);
+    const selectedTemplateKey = templateKeys[selectedTemplateIndex - 1];
 
-  const [selectedFields, setSelectedFields] = useState(initialState);
-  const [selectedTableTemplate, setSelectedTableTemplate] = useState(null);
+    comparedFields = tablesTemplates[selectedTemplateKey];
 
-  const handleDropdownChange = (field, value) => {
+    setSelectedFields([]);
+    setFieldsForTable(comparedFields);
+    setSelectedTableTemplate(selectedTemplateIndex);
+  };
+
+  const handleСomparisonFieldChange = (field, value) => {
     setSelectedFields((prevState) => ({
       ...prevState,
       [field]: value,
@@ -93,8 +132,6 @@ const TableCreation = () => {
           detail: "Файл успешно загружен",
           life: 3000,
         });
-
-        console.log(jsonData);
       };
       reader.readAsArrayBuffer(file);
     } else {
@@ -127,14 +164,14 @@ const TableCreation = () => {
             ></i>
           )}
 
-          <label class="input-file">
+          <label className="input-file">
             <input
               type="file"
               name="file"
               accept=".xlsx, .xls"
               onChange={handleFileChange}
             />
-            <span class="input-file-btn">Выберите файл</span>
+            <span className="input-file-btn">Выберите файл</span>
           </label>
         </div>
 
@@ -144,7 +181,7 @@ const TableCreation = () => {
             placeholder={`Выберите шаблон таблицы`}
             options={tableTemplateOptions}
             editable
-            onChange={(e) => setSelectedTableTemplate(e.value)}
+            onChange={(e) => handleDropdownTableTemplateChange(e.value)}
           />
         </div>
       </div>
@@ -155,12 +192,11 @@ const TableCreation = () => {
           {fieldsForTable.map((field) => (
             <div className="dropdown-container">
               <Dropdown
-                id={field}
                 value={selectedFields[field]}
                 placeholder={`Выберите поле для ${field}`}
                 options={userTableOptions}
                 editable
-                onChange={(e) => handleDropdownChange(field, e.value)}
+                onChange={(e) => handleСomparisonFieldChange(field, e.value)}
               />
             </div>
           ))}
