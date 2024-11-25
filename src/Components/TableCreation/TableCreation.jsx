@@ -66,7 +66,7 @@ const TableCreation = () => {
   //       );
   //       const result = await response.json();
   //       setTableTemplateData(result);
-  //       setTableTemplateOptions(result);
+  //       setTablesTemplateOptions(result);
   //     } catch (error) {
   //       setError(error.message);
   //     } finally {
@@ -107,10 +107,10 @@ const TableCreation = () => {
   const handleDropdownTableTemplateChange = (selectedTemplateIndex) => {
     let comparedFields = [];
 
-    const templateKeys = Object.keys(tablesTemplates);
+    const templateKeys = Object.keys(tableTemplateData);
     const selectedTemplateKey = templateKeys[selectedTemplateIndex - 1];
 
-    comparedFields = tablesTemplates[selectedTemplateKey];
+    comparedFields = tableTemplateData[selectedTemplateKey];
 
     setSelectedFields([]);
     setFieldsForTable(comparedFields);
@@ -217,7 +217,6 @@ const TableCreation = () => {
             value={selectedTableTemplate}
             placeholder={`Выберите шаблон таблицы`}
             options={tableTemplateOptions}
-            editable
             onChange={(e) => handleDropdownTableTemplateChange(e.value)}
           />
         </div>
@@ -232,7 +231,6 @@ const TableCreation = () => {
                 value={selectedFields[field]}
                 placeholder={`Выберите поле для ${field}`}
                 options={userTableOptions}
-                editable
                 onChange={(e) => handleСomparisonFieldChange(field, e.value)}
               />
             </div>
