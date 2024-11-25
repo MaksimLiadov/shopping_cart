@@ -29,7 +29,7 @@ const TableCreation = () => {
 
   const [tableTemplateData, setTableTemplateData] = useState(tablesTemplates);
   const [tableTemplateOptions, setTableTemplateOptions] = useState([]);
-  const [selectedTableTemplate, setSelectedTableTemplate] = useState(null);
+  const [selectedTableTemplate, setSelectedTableTemplate] = useState(1);
 
   const [userTableOptions, setUserTableOptions] = useState([]);
   const [selectedFields, setSelectedFields] = useState([]);
@@ -88,6 +88,7 @@ const TableCreation = () => {
     }
 
     setTableTemplateOptions(tablesTemplatesNames);
+    handleDropdownTableTemplateChange(1);
 
     return () => {};
   }, []);
