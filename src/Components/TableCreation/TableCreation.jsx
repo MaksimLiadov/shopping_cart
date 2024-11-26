@@ -27,7 +27,7 @@ const TableCreation = () => {
     ],
   };
 
-  const [tableTemplateData, setTableTemplateData] = useState(tablesTemplates);
+  const [tableTemplateData, setTableTemplateData] = useState();
   const [tableTemplateOptions, setTableTemplateOptions] = useState([]);
   const [selectedTableTemplate, setSelectedTableTemplate] = useState(null);
 
@@ -58,39 +58,39 @@ const TableCreation = () => {
     setTableTemplateOptions(tablesTemplatesNames);
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         "http://localhost:5000/api/database/structure"
-  //       );
-  //       const result = await response.json();
-  //       setTableTemplateData(result);
-  //       setTablesTemplateOptions(result);
-  //     } catch (error) {
-  //       setError(error.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/get/tablesTemplates"
+        );
+        const result = await response.json();
+        setTableTemplateData(result);
+        setTablesTemplateOptions(result);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   fetchData();
-  // }, []);
+    fetchData();
+  }, []);
 
   // Пока api не заработает
-  useEffect(() => {
-    let tablesTemplatesNames = [];
-    let counter = 1;
+  // useEffect(() => {
+  //   let tablesTemplatesNames = [];
+  //   let counter = 1;
 
-    for (let field in tableTemplateData) {
-      tablesTemplatesNames.push({ label: field, value: counter });
-      counter++;
-    }
+  //   for (let field in tableTemplateData) {
+  //     tablesTemplatesNames.push({ label: field, value: counter });
+  //     counter++;
+  //   }
 
-    setTableTemplateOptions(tablesTemplatesNames);
+  //   setTableTemplateOptions(tablesTemplatesNames);
 
-    return () => {};
-  }, []);
+  //   return () => {};
+  // }, []);
 
   const userTableOptionsFill = (fields) => {
     let options = [];
