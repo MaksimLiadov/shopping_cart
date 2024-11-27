@@ -8,25 +8,6 @@ import * as XLSX from "xlsx";
 import "./TableCreation.css";
 
 const TableCreation = () => {
-  let tablesTemplates = {
-    Мебель: ["name", "material", "color"],
-    Товары: ["name", "price", "description"],
-    Много_полей: [
-      "name",
-      "price",
-      "description",
-      "name",
-      "price",
-      "description",
-      "name",
-      "price",
-      "description",
-      "name",
-      "price",
-      "description",
-    ],
-  };
-
   const [tableTemplateData, setTableTemplateData] = useState();
   const [tableTemplateOptions, setTableTemplateOptions] = useState([]);
   const [selectedTableTemplate, setSelectedTableTemplate] = useState(1);
@@ -45,19 +26,6 @@ const TableCreation = () => {
 
   const toast = React.useRef(null);
 
-  //для api
-  const setTablesTemplateOptions = (data) => {
-    let tablesTemplatesNames = [];
-    let counter = 1;
-
-    for (let field in data) {
-      tablesTemplatesNames.push({ label: field, value: counter });
-      counter++;
-    }
-
-    setTableTemplateOptions(tablesTemplatesNames);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,7 +34,7 @@ const TableCreation = () => {
         );
         const result = await response.json();
         setTableTemplateData(result);
-        setTablesTemplateOptions(result);
+        setInitialState(result);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -77,20 +45,29 @@ const TableCreation = () => {
     fetchData();
   }, []);
 
-  // Пока api не заработает
-  // useEffect(() => {
-  //   let tablesTemplatesNames = [];
-  //   let counter = 1;
+  const setInitialState = (result) => {
+    //Загрузка начальной таблицы 
+    let comparedFields = [];
 
-  //   for (let field in tableTemplateData) {
-  //     tablesTemplatesNames.push({ label: field, value: counter });
-  //     counter++;
-  //   }
+    const templateKeys = Object.keys(result);
+    const selectedTemplateKey = templateKeys[0];
+    comparedFields = result[selectedTemplateKey];
 
-  //   setTableTemplateOptions(tablesTemplatesNames);
+    setFieldsForTable(comparedFields);
 
-  //   return () => {};
-  // }, []);
+    //Загрузка значений для Dropdown с выбором шаблона
+    let tablesTemplatesNames = [];
+    let counter = 1;
+
+    for (let field in result) {
+      tablesTemplatesNames.push({ label: field, value: counter });
+      counter++;
+    }
+
+    setTableTemplateOptions(tablesTemplatesNames);
+
+    setTableTemplateData(result);
+  };
 
   const userTableOptionsFill = (fields) => {
     let options = [];
@@ -104,17 +81,16 @@ const TableCreation = () => {
     setUserTableOptions(options);
   };
 
-  const handleDropdownTableTemplateChange = (selectedTemplateIndex) => {
+  const handleDropdownTableTemplateChange = (selectedTemplateNumber) => {
     let comparedFields = [];
 
     const templateKeys = Object.keys(tableTemplateData);
-    const selectedTemplateKey = templateKeys[selectedTemplateIndex - 1];
-
+    const selectedTemplateKey = templateKeys[selectedTemplateNumber - 1];
     comparedFields = tableTemplateData[selectedTemplateKey];
 
     setSelectedFields([]);
     setFieldsForTable(comparedFields);
-    setSelectedTableTemplate(selectedTemplateIndex);
+    setSelectedTableTemplate(selectedTemplateNumber);
   };
 
   const handleСomparisonFieldChange = (field, value) => {
