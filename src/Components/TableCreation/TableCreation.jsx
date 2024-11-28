@@ -220,7 +220,7 @@ const TableCreation = () => {
           ))}
         </div>
       </div>
-      <div className="navigation">
+      <div className="table-creation-navigation">
         {fileSelected && allFieldsForTableFilled ? (
           <Link to="/orderBuilder">
             <Button label="Далее" />

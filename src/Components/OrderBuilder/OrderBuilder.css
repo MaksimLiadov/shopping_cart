@@ -1,0 +1,40 @@
+.order-builder-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 32px;
+}
+
+.value-container {
+  display: flex;
+  justify-content: end;
+
+  margin: 10px;
+}
+
+.value-container > * {
+  margin-right: 5px;
+}
+
+.checkbox-isRequire {
+  margin-bottom: 15px;
+}
+
+.addFieldDialogСontrol {
+  display: flex;
+  justify-content: space-between;
+}
+
+.addFieldDialogСontrol .p-inputtext {
+  width: 70%;
+}
+
+.order-builder-navigation {
+  margin-top: 20px;
+}
+
+.order-builder-navigation > * {
+  margin-right: 10px;
+}
