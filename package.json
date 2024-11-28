@@ -11,6 +11,7 @@
     "@types/node": "^16.18.105",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "concurrently": "^9.1.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.8.2",
     "react": "^18.3.1",
@@ -24,7 +25,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"react-scripts start\" \"cd online-store-api && node app.js\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
