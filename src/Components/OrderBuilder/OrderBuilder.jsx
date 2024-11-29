@@ -11,14 +11,6 @@ import "./OrderBuilder.css";
 const OrderBuilder = () => {
   const toast = React.useRef(null);
 
-  let apiData = [
-    { name: "name1", required: false },
-    { name: "name2", required: false },
-    { name: "name3", required: true },
-    { name: "name4", required: true },
-    { name: "longname4", required: true },
-  ];
-
   const [fieldsForTable, setFieldsForTable] = useState([]);
 
   const [newFieldName, setNewFieldName] = useState("");
@@ -27,22 +19,19 @@ const OrderBuilder = () => {
   const [isRequire, setIsRequire] = useState(false);
 
   useEffect(() => {
-    setInitialState(apiData);
-    // const fetchData = async () => {
-    //   try {
-    //     const response = await fetch(
-    //       "http://localhost:5000/api/get/tablesTemplates"
-    //     );
-    //     const result = await response.json();
-    //     setInitialState(result);
-    //   } catch (error) {
-    //     setError(error.message);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/get/orderProcessingColumns"
+        );
+        const result = await response.json();
+        setInitialState(result);
+      } catch (error) {
+      } finally {
+      }
+    };
 
-    // fetchData();
+    fetchData();
   }, []);
 
   const setInitialState = (apiData) => {
