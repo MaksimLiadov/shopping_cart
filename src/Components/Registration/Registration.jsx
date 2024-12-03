@@ -1,44 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation  } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Link } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
-import "./Authorization.css";
+import "./Registration.css";
 
-const Authorization = () => {
+const Registration = () => {
   const toast = React.useRef(null);
-  const location = useLocation();
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [fio, setFio] = useState("");
 
   const [error, setError] = useState();
   const [loading, setLoading] = useState("");
 
-  const [isMessageShown, setIsMessageShown] = useState(false);
-
-  useEffect(() => {
-    if (location.state && location.state.message && !isMessageShown) {
-      toast.current.show({
-        severity: "success",
-        summary: "Успех",
-        detail: location.state.message,
-        life: 3000,
-      });
-      setIsMessageShown(true);
-    }
-  }, [location.state]);
-
-  const authorization = () => {
+  const registration = () => {
     if (!username) {
       toast.current.show({
         severity: "error",
         summary: "Ошибка",
-        detail: "Логин не может быть пустым",
+        detail: "Имя пользователя не может быть пустым",
         life: 3000,
       });
       return;
@@ -49,6 +35,16 @@ const Authorization = () => {
         severity: "error",
         summary: "Ошибка",
         detail: "Пароль не может быть пустым",
+        life: 3000,
+      });
+      return;
+    }
+
+    if (!fio) {
+      toast.current.show({
+        severity: "error",
+        summary: "Ошибка",
+        detail: "ФИО не может быть пустым",
         life: 3000,
       });
       return;
@@ -74,7 +70,7 @@ const Authorization = () => {
     let response = true;
 
     if (response) {
-      navigate("/tableCreation");
+      navigate("/", { state: { message: "Вы зарегистрировались!" } });
     }
   };
 
@@ -82,8 +78,19 @@ const Authorization = () => {
     <div className="full-page">
       <Toast ref={toast} />
       <div className="authorization-container">
-        <header>Авторизация</header>
+        <header>Регистрация</header>
         <div className="input-data">
+        <div className="p-inputgroup flex-1">
+            <span className="p-inputgroup-addon">
+              <i className="pi pi-user"></i>
+            </span>
+            <InputText
+              value={fio}
+              onChange={(e) => setFio(e.target.value)}
+              placeholder="ФИО"
+              maxLength={40}
+            />
+          </div>
           <div className="p-inputgroup flex-1">
             <span className="p-inputgroup-addon">
               <i className="pi pi-user"></i>
@@ -108,9 +115,9 @@ const Authorization = () => {
           </div>
         </div>
         <div className="buttons">
-          <Button onClick={authorization} label="Вход" />
-          <Link to="/registration">
-            <Button label="Регистрация" />
+          <Button onClick={registration} label="Регистрация" />
+          <Link to="/">
+            <Button label="Авторизация" />
           </Link>
         </div>
       </div>
@@ -118,4 +125,4 @@ const Authorization = () => {
   );
 };
 
-export default Authorization;
+export default Registration;
