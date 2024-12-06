@@ -2,12 +2,19 @@ import express from 'express';
 import cors from 'cors';
 import { checkDbConnection } from './config/dbConnect.js'; // Импортируем функцию для проверки подключения к базе данных
 import getRoutes from './routes/getRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
+
 app.use(cors());
 const PORT = process.env.PORT || 5000;
 
+// Middleware для парсинга JSON
+app.use(express.json());
+
+// Роуты
 app.use('/api/get', getRoutes);
+app.use('/api/auth', authRoutes);
 
 // Проверка подключения к базе данных
 checkDbConnection()
