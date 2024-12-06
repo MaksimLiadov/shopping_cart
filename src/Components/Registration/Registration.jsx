@@ -50,27 +50,37 @@ const Registration = () => {
       return;
     }
 
-    // Заготовка под api
-    // const fetchData = async () => {
-    //   try {
-    //     const response = await fetch(
-    //       "http://localhost:5000/api/get/tablesTemplates"
-    //     );
-    //     const result = await response.json();
-    //     setTableTemplateData(result);
-    //     setInitialState(result);
-    //   } catch (error) {
-    //     setError(error.message);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
+    fetchData({ username: username, password: password, name: fio });
+  };
 
-    // fetchData();
-    let response = true;
+  const fetchData = async (data) => {
+    console.log(data);
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    if (response) {
-      navigate("/", { state: { message: "Вы зарегистрировались!" } });
+      const result = await response.json();
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+    } catch (error) {
+      toast.current.show({
+        severity: "error",
+        summary: "Ошибка",
+        detail: error.message,
+        life: 3000,
+      });
+      
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,7 +90,7 @@ const Registration = () => {
       <div className="authorization-container">
         <header>Регистрация</header>
         <div className="input-data">
-        <div className="p-inputgroup flex-1">
+          <div className="p-inputgroup flex-1">
             <span className="p-inputgroup-addon">
               <i className="pi pi-user"></i>
             </span>
@@ -115,10 +125,10 @@ const Registration = () => {
           </div>
         </div>
         <div className="buttons">
-          <Button onClick={registration} label="Регистрация" />
           <Link to="/">
             <Button label="Авторизация" />
           </Link>
+          <Button onClick={registration} label="Регистрация" />
         </div>
       </div>
     </div>

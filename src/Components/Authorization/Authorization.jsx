@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation  } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import { setUser } from "../../features/slices/userSlice";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Link } from "react-router-dom";
@@ -12,6 +14,7 @@ const Authorization = () => {
   const toast = React.useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -54,27 +57,38 @@ const Authorization = () => {
       return;
     }
 
-    // Заготовка под api
-    // const fetchData = async () => {
-    //   try {
-    //     const response = await fetch(
-    //       "http://localhost:5000/api/get/tablesTemplates"
-    //     );
-    //     const result = await response.json();
-    //     setTableTemplateData(result);
-    //     setInitialState(result);
-    //   } catch (error) {
-    //     setError(error.message);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
+    fetchData({ username: username, password: password });
+  };
 
-    // fetchData();
-    let response = true;
+  const fetchData = async (data) => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    if (response) {
-      navigate("/tableCreation");
+      const result = await response.json();
+
+      if (result.error) {
+        throw new Error(result.error);
+      } else {
+        //dispatch(addProduct({ product: props.product, amount }));
+        dispatch(setUser(data));
+        navigate("/tableCreation");
+      }
+    } catch (error) {
+      toast.current.show({
+        severity: "error",
+        summary: "Ошибка",
+        detail: error.message,
+        life: 3000,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,10 +122,10 @@ const Authorization = () => {
           </div>
         </div>
         <div className="buttons">
-          <Button onClick={authorization} label="Вход" />
           <Link to="/registration">
             <Button label="Регистрация" />
           </Link>
+          <Button onClick={authorization} label="Вход" />
         </div>
       </div>
     </div>
