@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
@@ -45,8 +46,14 @@ const TableCreation = () => {
     fetchData();
   }, []);
 
+  //Проверка получения данных пользователя
+  const userData = useSelector((state) => state.user.user);
+
   const setInitialState = (result) => {
-    //Загрузка начальной таблицы 
+    //Проверка получения данных пользователя
+    console.log(userData);
+
+    //Загрузка начальной таблицы
     let comparedFields = [];
 
     const templateKeys = Object.keys(result);

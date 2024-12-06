@@ -9,6 +9,8 @@ import "primereact/resources/primereact.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import Main from "./Components/Main/Main";
 import BasketContainer from "./Components/Basket/BasketContainer/BasketContainer";
+import Authorization from "./Components/Authorization/Authorization";
+import Registration from "./Components/Registration/Registration";
 import TableCreation from "./Components/TableCreation/TableCreation";
 import OrderBuilder from "./Components/OrderBuilder/OrderBuilder";
 import "./index.css";
@@ -22,7 +24,9 @@ root.render(
       <Provider store={store}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<TableCreation />} />
+            <Route path="/" element={<Authorization />} />
+            <Route path="/registration" element={<Registration />} />
+            <Route path="/tableCreation" element={<TableCreation />} />
             <Route path="/orderBuilder" element={<OrderBuilder />} />
             <Route path="/catalog" element={<Main />} />
             <Route path="/basket" element={<BasketContainer />} />
