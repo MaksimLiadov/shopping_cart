@@ -3,10 +3,13 @@ import { useDispatch } from "react-redux";
 import { addProduct } from "../../../../features/slices/basketSlice";
 import { Button } from "primereact/button";
 import { InputNumber } from "primereact/inputnumber";
+import { Toast } from "primereact/toast";
 import "primeicons/primeicons.css";
 import "./ProductTableActions.css";
 
 const ProductTableActions = (props) => {
+  const toast = React.useRef(null);
+
   const [amount, setAmount] = useState(0);
 
   const dispatch = useDispatch();
@@ -14,6 +17,13 @@ const ProductTableActions = (props) => {
   const handleAddProduct = () => {
     if (amount != 0) {
       dispatch(addProduct({ product: props.product, amount }));
+      console.log(props.product, amount)
+      toast.current.show({
+        severity: "success",
+        summary: "Успех!",
+        detail: `В корзину добавлен ${props.product.name}, ${amount} шт.`,
+        life: 1000,
+      });
     }
   };
 
@@ -31,6 +41,7 @@ const ProductTableActions = (props) => {
 
   return (
     <div className="productTableActionsContainer">
+      <Toast ref={toast} />
       <InputNumber
         className="basketInputNumber"
         inputId="integeronly"

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../features/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
@@ -11,6 +13,7 @@ import "./Registration.css";
 const Registration = () => {
   const toast = React.useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -69,8 +72,12 @@ const Registration = () => {
 
       if (result.error) {
         throw new Error(result.error);
-      }
+      } else {
+        const { name, ...rest } = data;
 
+        dispatch(setUser(rest));
+        navigate("/tableCreation");
+      }
     } catch (error) {
       toast.current.show({
         severity: "error",

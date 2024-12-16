@@ -76,7 +76,6 @@ const Authorization = () => {
       if (result.error) {
         throw new Error(result.error);
       } else {
-        //dispatch(addProduct({ product: props.product, amount }));
         dispatch(setUser(data));
         navigate("/tableCreation");
       }

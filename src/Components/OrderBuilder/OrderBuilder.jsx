@@ -4,7 +4,6 @@ import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { Checkbox } from "primereact/checkbox";
 import "primeicons/primeicons.css";
 import "./OrderBuilder.css";
 
@@ -16,7 +15,6 @@ const OrderBuilder = () => {
   const [newFieldName, setNewFieldName] = useState("");
   const [isShowAddFieldDialog, showAddFieldDialog] = useState(false);
   const [isNewFieldNameMatches, setIsNewFieldNameMatches] = useState(false);
-  const [isRequire, setIsRequire] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +82,7 @@ const OrderBuilder = () => {
       return;
     }
 
-    let newField = { name: newFieldName, required: isRequire };
+    let newField = { name: newFieldName, required: false };
     setFieldsForTable((prevFields) => [...prevFields, newField]);
 
     showAddFieldDialog(!isClose);
@@ -123,7 +121,6 @@ const OrderBuilder = () => {
           onClick={() => {
             showAddFieldDialog(true);
             setNewFieldName("");
-            setIsRequire(false);
           }}
         />
         <Link to="/catalog">
@@ -144,16 +141,6 @@ const OrderBuilder = () => {
           <br />
           Максимальная длина 50символов.
         </p>
-        <div className="checkbox-isRequire">
-          <Checkbox
-            inputId="isRequire"
-            onChange={(e) => setIsRequire(e.checked)}
-            checked={isRequire}
-          ></Checkbox>
-          <label htmlFor="isRequire" className="ml-2">
-            Обязательно для заполнения
-          </label>
-        </div>
         <div className="addFieldDialogСontrol">
           <InputText
             value={newFieldName}

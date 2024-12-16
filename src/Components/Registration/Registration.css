@@ -16,8 +16,10 @@
   left: 50%;
   transform: translateX(-50%);
 
-  background-color: hsl(226, 100%, 88%);
+  background-color: hsl(223, 100%, 99%);
+  /* background-color: hsl(226, 100%, 88%); */
   border-radius: 30px;
+  border: 1px solid black;
 
   display: flex;
   flex-direction: column;
