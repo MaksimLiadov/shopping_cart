@@ -5,6 +5,6 @@
     grid-template-columns: auto 100%;
 }
 
-.MainContainer * {
+.MainContainer > * {
     font-size: 32px;
 }

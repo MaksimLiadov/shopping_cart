@@ -9,7 +9,7 @@ const ProductsTable = () => {
     const catalogData = useSelector((state) => state.catalog.catalogData);
     const columns = Object.keys(catalogData[0] || {}).map((key) => ({
         field: key,
-        header: key.charAt(0).toUpperCase() + key.slice(1), // Делаем первую букву заглавной
+        header: key.charAt(0).toUpperCase() + key.slice(1),
       }));
     
       return (

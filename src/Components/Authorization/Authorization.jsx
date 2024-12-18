@@ -117,6 +117,7 @@ const Authorization = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Пароль"
               maxLength={40}
+              feedback={false}
             />
           </div>
         </div>

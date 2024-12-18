@@ -21,7 +21,7 @@ const ProductTableActions = (props) => {
         severity: "success",
         summary: "Успех!",
         detail: `В корзину добавлен ${props.product.name}, ${amount} шт.`,
-        life: 1000,
+        life: 3000,
       });
     }
   };
@@ -40,7 +40,7 @@ const ProductTableActions = (props) => {
 
   return (
     <div className="productTableActionsContainer">
-      <Toast ref={toast} />
+      <Toast className="productTableToast" ref={toast} />
       <InputNumber
         className="basketInputNumber"
         inputId="integeronly"
