@@ -131,18 +131,18 @@ const TableCreation = () => {
       templateName: tableTemplateOptions[selectedTableTemplate - 1].label,
       columns: fieldsForTable,
       data: data,
-    }
+    };
 
-    const refactoredTableData = data.map(item => {
-      return Object.fromEntries(item.map((value, index) => [fieldsForTable[index], value]));
+    const refactoredTableData = data.map((item) => {
+      return Object.fromEntries(
+        item.map((value, index) => [fieldsForTable[index], value])
+      );
     });
 
-    //postTableData(requestBody);
-    dispatch(setNewCatalog(refactoredTableData));
-    navigate("/orderBuilder");
+    postTableData(requestBody, refactoredTableData);
   };
 
-  const postTableData = async (data) => {
+  const postTableData = async (data, refactoredTableData) => {
     setLoading(true);
     try {
       const response = await fetch(
@@ -161,10 +161,10 @@ const TableCreation = () => {
       if (result.error) {
         throw new Error(result.error);
       } else {
-        console.log("result", result);
+        dispatch(setNewCatalog(refactoredTableData));
+        navigate("/orderBuilder");
       }
     } catch (error) {
-      console.log("error", error);
     } finally {
     }
   };
@@ -301,7 +301,7 @@ const TableCreation = () => {
       </div>
       <div className="table-creation-navigation">
         {fileSelected && allFieldsForTableFilled ? (
-            <Button onClick={handleFurtherClick} label="Далее" />
+          <Button onClick={handleFurtherClick} label="Далее" />
         ) : (
           <Button label="Далее" disabled />
         )}
