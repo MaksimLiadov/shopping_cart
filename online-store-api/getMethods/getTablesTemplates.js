@@ -20,7 +20,7 @@ function translateTableNames(tables) {
 }
 
 /**
- * Метод для получения объекта с таблицами-шаблонами и их столбцами.
+ * Метод для получения объекта с таблицами-шаблонами и их столбцами, кроме id.
  * @param {Array<string>} tableNames - Массив с именами таблиц, которые нужно получить.
  * @returns {Promise<object>} Объект с названиями таблиц и массивами их столбцов.
  */
@@ -31,7 +31,9 @@ export async function getTablesTemplates(tableNames) {
   try {
     for (const tableName of tableNames) {
       const columns = await queryInterface.describeTable(tableName); // Описание таблицы
-      tablesTemplates[tableName] = Object.keys(columns); // Список названий столбцов
+
+      const filteredColumns = Object.keys(columns).filter(column => column !== 'id');
+      tablesTemplates[tableName] = filteredColumns; // Список названий столбцов без id
     }
 
     const translatedTablesTemplates = translateTableNames(tablesTemplates); // Заменяем названия таблиц на русские
