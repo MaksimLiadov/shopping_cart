@@ -1,17 +1,17 @@
 import sequelize from '../config/dbConnect.js';
 
 export const uploadUserData = async (req, res) => {
-    const { userId, tableName, columns, data } = req.body;
+    const { userId, userTableName, templateName, columns, data } = req.body;
 
     const transaction = await sequelize.transaction();
 
     try {
-        if (!userId || !tableName || !Array.isArray(columns) || !Array.isArray(data)) {
+        if (!userId || !userTableName || !templateName || !Array.isArray(columns) || !Array.isArray(data)) {
             return res.status(400).json({ error: 'Некорректные входные данные.' });
         }
 
         // Уникальное имя таблицы
-        const uniqueTableName = `user_${userId}_${tableName}`;
+        const uniqueTableName = `user_${userId}_${userTableName}`;
 
         // Проверяем уникальность имени таблицы для данного пользователя
         const [existingTable] = await sequelize.query(
@@ -23,13 +23,13 @@ export const uploadUserData = async (req, res) => {
         );
     
         if (existingTable) {
-            return res.status(400).json({ error: `Таблица с именем "${tableName}" уже существует для данного пользователя.` });
+            return res.status(400).json({ error: `Таблица с именем "${userTableName}" уже существует для данного пользователя.` });
         }
 
         // Получаем информацию о структуре шаблонной таблицы
-        const [columnsInfo] = await sequelize.query(`PRAGMA table_info(${tableName});`);
+        const [columnsInfo] = await sequelize.query(`PRAGMA table_info(${templateName});`);
         if (!columnsInfo || columnsInfo.length === 0) {
-            throw new Error(`Шаблонная таблица ${tableName} не найдена.`);
+            throw new Error(`Шаблонная таблица ${templateName} не найдена.`);
         }
 
         // Генерация SQL для создания таблицы с точной структурой
