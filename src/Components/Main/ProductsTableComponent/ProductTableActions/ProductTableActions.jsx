@@ -17,7 +17,6 @@ const ProductTableActions = (props) => {
   const handleAddProduct = () => {
     if (amount != 0) {
       dispatch(addProduct({ product: props.product, amount }));
-      console.log(props.product, amount)
       toast.current.show({
         severity: "success",
         summary: "Успех!",

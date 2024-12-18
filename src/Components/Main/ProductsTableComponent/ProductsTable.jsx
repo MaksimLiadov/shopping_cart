@@ -7,18 +7,21 @@ import "./ProductsTable.css";
 
 const ProductsTable = () => {
     const catalogData = useSelector((state) => state.catalog.catalogData);
-
-    return (
-        <div className="catalogDataTableContainer">
-            <DataTable className="catalogDataTable" value={catalogData} tableStyle={{ minWidth: '50rem' }}>
-                <Column field="name" header="Наименование"></Column>
-                <Column field="price" header="Цена"></Column>
-                <Column header="Действия" body={(rowData) => (
-                    <ProductTableActions product={rowData} />
-                )}></Column>
-            </DataTable>
-        </div >
-    );
+    const columns = Object.keys(catalogData[0] || {}).map((key) => ({
+        field: key,
+        header: key.charAt(0).toUpperCase() + key.slice(1), // Делаем первую букву заглавной
+      }));
+    
+      return (
+        <DataTable className="catalogDataTable" value={catalogData} tableStyle={{ minWidth: '50rem' }}>
+          {columns.map((col) => (
+            <Column key={col.field} field={col.field} header={col.header} />
+          ))}
+          <Column header="Действия" body={(rowData) => (
+            <ProductTableActions product={rowData} />
+          )}></Column>
+        </DataTable>
+      );
 };
 
 export default ProductsTable;

@@ -7,8 +7,11 @@ export const catalogSlice = createSlice({
     catalogData
   },
   reducers: {
+    setNewCatalog(state, action) {
+      state.catalogData = action.payload;
+  },
   },
 });
 
-export const { } = catalogSlice.actions;
+export const { setNewCatalog } = catalogSlice.actions;
 export default catalogSlice.reducer;

@@ -57,7 +57,6 @@ const Registration = () => {
   };
 
   const fetchData = async (data) => {
-    console.log(data);
     setLoading(true);
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
@@ -73,9 +72,7 @@ const Registration = () => {
       if (result.error) {
         throw new Error(result.error);
       } else {
-        const { name, ...rest } = data;
-
-        dispatch(setUser(rest));
+        dispatch(setUser(result.user));
         navigate("/tableCreation");
       }
     } catch (error) {
