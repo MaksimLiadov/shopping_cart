@@ -76,7 +76,7 @@ const Authorization = () => {
       if (result.error) {
         throw new Error(result.error);
       } else {
-        dispatch(setUser(data));
+        dispatch(setUser(result.user));
         navigate("/tableCreation");
       }
     } catch (error) {

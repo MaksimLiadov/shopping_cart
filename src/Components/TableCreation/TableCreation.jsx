@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setNewCatalog } from "../../features/slices/catalogSlice";
+import { InputText } from "primereact/inputtext";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
@@ -25,7 +28,15 @@ const TableCreation = () => {
   const [excelData, setExcelData] = useState(null);
   const [fileSelected, setFileSelected] = useState(false);
 
+  const [tableName, setTableName] = useState("");
+  const [isTableNameFilled, setIsTableNameFilled] = useState(false);
+
+  const userData = useSelector((state) => state.user.user);
+  const catalogData = useSelector((state) => state.catalog.catalogData);
+
   const toast = React.useRef(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,13 +57,7 @@ const TableCreation = () => {
     fetchData();
   }, []);
 
-  //Проверка получения данных пользователя
-  const userData = useSelector((state) => state.user.user);
-
   const setInitialState = (result) => {
-    //Проверка получения данных пользователя
-    console.log(userData);
-
     //Загрузка начальной таблицы
     let comparedFields = [];
 
@@ -105,6 +110,63 @@ const TableCreation = () => {
       ...prevState,
       [field]: value,
     }));
+  };
+
+  const handleFurtherClick = () => {
+    let data = [];
+
+    for (let i = 0; i < excelData.length; i++) {
+      let row = [];
+      for (let field in selectedFields) {
+        const values = Object.values(excelData[i]);
+        const value = values[selectedFields[field] - 1];
+        row.push(String(value));
+      }
+      data.push(row);
+    }
+
+    let requestBody = {
+      userId: userData.id,
+      userTableName: tableName,
+      templateName: tableTemplateOptions[selectedTableTemplate - 1].label,
+      columns: fieldsForTable,
+      data: data,
+    }
+
+    const refactoredTableData = data.map(item => {
+      return Object.fromEntries(item.map((value, index) => [fieldsForTable[index], value]));
+    });
+
+    //postTableData(requestBody);
+    dispatch(setNewCatalog(refactoredTableData));
+    navigate("/orderBuilder");
+  };
+
+  const postTableData = async (data) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/user/uploadData",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.error) {
+        throw new Error(result.error);
+      } else {
+        console.log("result", result);
+      }
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+    }
   };
 
   useEffect(() => {
@@ -167,6 +229,11 @@ const TableCreation = () => {
     }
   };
 
+  const handleTableNameChange = (name) => {
+    name === "" ? setIsTableNameFilled(false) : setIsTableNameFilled(true);
+    setTableName(name);
+  };
+
   return (
     <div className="table-creation-container">
       <Toast ref={toast} />
@@ -194,7 +261,12 @@ const TableCreation = () => {
             <span className="input-file-btn">Выберите файл</span>
           </label>
         </div>
-
+        <InputText
+          className="tableCreationInputText"
+          value={tableName}
+          onChange={(e) => handleTableNameChange(e.target.value)}
+          placeholder="Название таблицы"
+        />
         <div className="table-template-selection">
           <Dropdown
             value={selectedTableTemplate}
@@ -229,9 +301,7 @@ const TableCreation = () => {
       </div>
       <div className="table-creation-navigation">
         {fileSelected && allFieldsForTableFilled ? (
-          <Link to="/orderBuilder">
-            <Button label="Далее" />
-          </Link>
+            <Button onClick={handleFurtherClick} label="Далее" />
         ) : (
           <Button label="Далее" disabled />
         )}
