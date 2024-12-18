@@ -32,7 +32,15 @@ export const registerUser = async (req, res) => {
             { replacements: [username, hashedPassword, 'user', name || null] }
         );
 
-        res.status(201).json({ message: 'Пользователь успешно зарегистрирован' });
+        const [user] = await sequelize.query(
+            'SELECT id, password, role FROM users WHERE username = ?',
+            { replacements: [username], type: sequelize.QueryTypes.SELECT }
+        );
+
+        res.status(201).json({
+            message: 'Пользователь успешно зарегистрирован',
+            user: { id: user.id, username, role: user.role },
+        });
     } catch (error) {
         console.error('Ошибка при регистрации:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
@@ -47,28 +55,28 @@ export const loginUser = async (req, res) => {
 
     try {
         if (!username || !password) {
-        return res.status(400).json({ error: 'Имя пользователя и пароль обязательны' });
+            return res.status(400).json({ error: 'Имя пользователя и пароль обязательны' });
         }
 
         // Поиск пользователя по username
         const [user] = await sequelize.query(
-        'SELECT id, password, role FROM users WHERE username = ?',
-        { replacements: [username], type: sequelize.QueryTypes.SELECT }
+            'SELECT id, password, role FROM users WHERE username = ?',
+            { replacements: [username], type: sequelize.QueryTypes.SELECT }
         );
 
         if (!user) {
-        return res.status(401).json({ error: 'Неверные имя пользователя или пароль' });
+            return res.status(401).json({ error: 'Неверные имя пользователя или пароль' });
         }
 
         // Проверка пароля
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-        return res.status(401).json({ error: 'Неверные имя пользователя или пароль' });
+            return res.status(401).json({ error: 'Неверные имя пользователя или пароль' });
         }
 
         res.status(200).json({
-        message: 'Авторизация успешна',
-        user: { id: user.id, username, role: user.role },
+            message: 'Авторизация успешна',
+            user: { id: user.id, username, role: user.role },
         });
     } catch (error) {
         console.error('Ошибка при авторизации:', error);
