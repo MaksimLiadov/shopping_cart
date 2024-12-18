@@ -1,5 +1,16 @@
 import sequelize from '../config/dbConnect.js';
 
+// Функция для перевода названия таблицы с русского на английский
+function translateTemplateName(russianName) {
+    const tableNameMapping = {
+        'Товары': 'goods',
+        'Мебель': 'furniture',
+    };
+    
+    return tableNameMapping[russianName];
+}
+
+
 export const uploadUserData = async (req, res) => {
     const { userId, userTableName, templateName, columns, data } = req.body;
 
@@ -8,6 +19,12 @@ export const uploadUserData = async (req, res) => {
     try {
         if (!userId || !userTableName || !templateName || !Array.isArray(columns) || !Array.isArray(data)) {
             return res.status(400).json({ error: 'Некорректные входные данные.' });
+        }
+
+        // Переводим название шаблонной таблицы с русского на английский
+        const translatedTemplateName = translateTemplateName(templateName);
+        if (!translatedTemplateName) {
+            return res.status(400).json({ error: `Шаблонная таблица "${templateName}" не найдена.` });
         }
 
         // Уникальное имя таблицы
@@ -27,9 +44,9 @@ export const uploadUserData = async (req, res) => {
         }
 
         // Получаем информацию о структуре шаблонной таблицы
-        const [columnsInfo] = await sequelize.query(`PRAGMA table_info(${templateName});`);
+        const [columnsInfo] = await sequelize.query(`PRAGMA table_info(${translatedTemplateName});`);
         if (!columnsInfo || columnsInfo.length === 0) {
-            throw new Error(`Шаблонная таблица ${templateName} не найдена.`);
+            throw new Error(`Шаблонная таблица ${translatedTemplateName} не найдена.`);
         }
 
         // Генерация SQL для создания таблицы с точной структурой
