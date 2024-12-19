@@ -1,3 +1,4 @@
+import { DataTypes } from 'sequelize';
 import sequelize from '../config/dbConnect.js';
 
 // Функция для перевода названия таблицы с русского на английский
@@ -18,7 +19,7 @@ export const uploadUserData = async (req, res) => {
 
     try {
         if (!userId || !userTableName || !templateName || !Array.isArray(columns) || !Array.isArray(data)) {
-            return res.status(400).json({ error: 'Некорректные входные данные.' });
+            return res.status(400).json({ error: `Некорректные входные данные.` });
         }
 
         // Переводим название шаблонной таблицы с русского на английский
@@ -88,6 +89,91 @@ export const uploadUserData = async (req, res) => {
         await transaction.rollback();
 
         console.error('Ошибка при загрузке данных пользователя:', error);
+        res.status(500).json({ error: 'Ошибка при обработке данных.' });
+    }
+};
+
+export const createOrderTables = async (req, res) => {
+    const { userId, primaryTableName, secondaryTableName, secondaryColumns } = req.body;
+
+    const transaction = await sequelize.transaction();
+
+    const primaryTableFullName = `user_${userId}_${primaryTableName}`;
+    const secondaryTableFullName = `user_${userId}_${secondaryTableName}`;
+
+    try {
+        if (!userId || !primaryTableName || !secondaryTableName || !Array.isArray(secondaryColumns)) {
+            throw new Error('Некорректные входные данные.');
+        }
+
+        // Проверяем связь таблиц в related_tables
+        const [existingRelation] = await sequelize.query(
+            'SELECT id FROM related_tables WHERE secondary_table = ?',
+            {
+                replacements: [secondaryTableFullName],
+                type: sequelize.QueryTypes.SELECT,
+            }
+        );
+    
+        if (existingRelation) {
+            throw new Error(`Таблица "${secondaryTableName}" уже связана с другой таблицей.`);
+        }
+
+        // Создание второй таблицы
+        const secondaryTableDefinition = secondaryColumns.reduce((definition, column) => {
+            if (!column.name) {
+                console.error('Ошибка: пустое имя столбца:', column);
+                throw new Error('Имя столбца не может быть пустым.');
+            }
+            if (typeof column.required !== 'boolean') {
+                console.error('Ошибка: некорректное значение required:', column);
+                throw new Error('Поле "required" должно быть true или false.');
+            }
+            definition[column.name] = { type: DataTypes.STRING, allowNull: !column.required };
+            return definition;
+        }, {});
+
+        await sequelize.getQueryInterface().createTable(secondaryTableFullName, {
+            id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+            },
+            ...secondaryTableDefinition,
+        }, { transaction });
+
+        // Сохраняем связь между таблицами
+        await sequelize.query(
+            'INSERT INTO related_tables (user_id, primary_table, secondary_table) VALUES (?, ?, ?)',
+            {
+                replacements: [userId, primaryTableFullName, secondaryTableFullName],
+                type: sequelize.QueryTypes.INSERT,
+                transaction,
+            }
+        );
+
+        // Подтверждаем транзакцию
+        await transaction.commit();
+        res.status(201).json({
+            message: 'Таблицы успешно созданы и связаны.',
+            primaryTable: primaryTableFullName,
+            secondaryTable: secondaryTableFullName,
+        });
+    } catch (error) {
+        // Откатываем транзакцию и удаляем первую таблицу, если вторая не создана
+        await transaction.rollback();
+
+        console.error('Ошибка при создании таблиц:', error.message);
+
+        await sequelize.getQueryInterface().dropTable(primaryTableFullName);
+        await sequelize.query(
+            'DELETE FROM user_tables WHERE user_id = ? AND table_name = ?',
+            {
+                replacements: [userId, primaryTableFullName],
+                type: sequelize.QueryTypes.DELETE,
+            }
+        );
+
         res.status(500).json({ error: 'Ошибка при обработке данных.' });
     }
 };
