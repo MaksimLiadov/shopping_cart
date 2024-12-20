@@ -93,6 +93,25 @@ export const uploadUserData = async (req, res) => {
     }
 };
 
+// Преобразование русских символов и пробелов в имена столбцов
+function processColumnName(name) {
+    const cyrillicToLatinMap = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+        'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i',
+        'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+        'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+        'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch',
+        'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '',
+        'э': 'e', 'ю': 'yu', 'я': 'ya'
+    };
+
+    // Заменяем пробелы на подчеркивания
+    const sanitized = name.replace(/\s+/g, '_').toLowerCase();
+
+    return sanitized.split('').map(char => cyrillicToLatinMap[char] || char).join('');
+}
+
+
 export const createOrderTables = async (req, res) => {
     const { userId, primaryTableName, secondaryTableName, secondaryColumns } = req.body;
 
@@ -106,6 +125,12 @@ export const createOrderTables = async (req, res) => {
             console.error('Ошибка: Некорректные входные данные.');
             throw new Error('Некорректные входные данные.');
         }
+
+        // Обрабатываем имена столбцов
+        const processedColumns = secondaryColumns.map(column => ({
+            ...column,
+            name: processColumnName(column.name),
+        }));
 
         // Проверяем связь таблиц в related_tables
         const [existingRelation] = await sequelize.query(
@@ -122,7 +147,7 @@ export const createOrderTables = async (req, res) => {
         }
 
         // Создание второй таблицы
-        const secondaryTableDefinition = secondaryColumns.reduce((definition, column) => {
+        const secondaryTableDefinition = processedColumns.reduce((definition, column) => {
             if (!column.name) {
                 console.error('Ошибка: пустое имя столбца:', column);
                 throw new Error('Имя столбца не может быть пустым.');
