@@ -47,6 +47,7 @@ export const uploadUserData = async (req, res) => {
         // Получаем информацию о структуре шаблонной таблицы
         const [columnsInfo] = await sequelize.query(`PRAGMA table_info(${translatedTemplateName});`);
         if (!columnsInfo || columnsInfo.length === 0) {
+            console.error(`Шаблонная таблица ${translatedTemplateName} не найдена.`);
             throw new Error(`Шаблонная таблица ${translatedTemplateName} не найдена.`);
         }
 
@@ -65,9 +66,16 @@ export const uploadUserData = async (req, res) => {
         for (const row of data) {
             const rowData = {};
             columns.forEach((column, index) => {
-                rowData[column] = row[index];
+                const value = row[index];
+                if (column === 'price') {
+                    if (typeof value !== 'number' || isNaN(value)) {
+                        console.error('Ошибка: значения в поле "price" должны быть числовыми.');
+                        throw new Error(`Ошибка в данных: значения в поле "price" должны быть числовыми. Было получено: ${value}`);
+                    }
+                }
+                rowData[column] = value;
             });
-            
+    
             await sequelize.queryInterface.bulkInsert(uniqueTableName, [rowData], { transaction });
         }
 
