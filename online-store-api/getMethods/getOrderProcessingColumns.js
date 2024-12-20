@@ -5,7 +5,16 @@ import sequelize from '../config/dbConnect.js';
  * @returns {Promise<Array<object>>} Массив объектов формата { name: string, required: boolean }
  */
 export async function getOrderProcessingColumns() {
-    const queryInterface = sequelize.getQueryInterface();
+  const queryInterface = sequelize.getQueryInterface();
+
+    // Статичный перевод названий столбцов
+    const columnTranslations = {
+      recipient_name: 'Имя получателя',
+      recipient_phone: 'Телефон получателя',
+      delivery_address: 'Адрес доставки',
+      payment_method: 'Способ оплаты',
+      delivery_date: 'Дата доставки',
+    };
 
     try {
       // Получаем информацию о структуре таблицы order_processing
@@ -15,7 +24,7 @@ export async function getOrderProcessingColumns() {
       const orderProcessingColumns = Object.entries(columns)
       .filter(([columnName]) => columnName !== 'id')
       .map(([columnName, columnInfo]) => ({
-        name: columnName,
+        name: columnTranslations[columnName],
         required: columnInfo.allowNull === false,
         }));
 
