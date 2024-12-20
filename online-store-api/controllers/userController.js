@@ -19,7 +19,7 @@ export const uploadUserData = async (req, res) => {
 
     try {
         if (!userId || !userTableName || !templateName || !Array.isArray(columns) || !Array.isArray(data)) {
-            return res.status(400).json({ error: `Некорректные входные данные.` });
+            return res.status(400).json({ error: 'Некорректные входные данные.' });
         }
 
         // Переводим название шаблонной таблицы с русского на английский
@@ -103,6 +103,7 @@ export const createOrderTables = async (req, res) => {
 
     try {
         if (!userId || !primaryTableName || !secondaryTableName || !Array.isArray(secondaryColumns)) {
+            console.error('Ошибка: Некорректные входные данные.');
             throw new Error('Некорректные входные данные.');
         }
 
@@ -116,6 +117,7 @@ export const createOrderTables = async (req, res) => {
         );
     
         if (existingRelation) {
+            console.error(`Ошибка: Таблица "${secondaryTableName}" уже связана с другой таблицей:`);
             throw new Error(`Таблица "${secondaryTableName}" уже связана с другой таблицей.`);
         }
 
