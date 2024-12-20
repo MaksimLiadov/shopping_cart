@@ -162,7 +162,7 @@ const TableCreation = () => {
         throw new Error(result.error);
       } else {
         dispatch(setNewCatalog(refactoredTableData));
-        navigate("/orderBuilder");
+        navigate("/orderBuilder", { state: { tableName: tableName } });
       }
     } catch (error) {
     } finally {

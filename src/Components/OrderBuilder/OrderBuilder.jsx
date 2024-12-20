@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { setNewOrderBuilder } from "../../features/slices/catalogSlice";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
@@ -9,6 +13,13 @@ import "./OrderBuilder.css";
 
 const OrderBuilder = () => {
   const toast = React.useRef(null);
+  const orderBuilderData = useSelector((state) => state.catalog.orderBuilder);
+  const userData = useSelector((state) => state.user.user);
+
+  const location = useLocation();
+  const { tableName } = location.state || {};
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [fieldsForTable, setFieldsForTable] = useState([]);
 
@@ -88,6 +99,43 @@ const OrderBuilder = () => {
     showAddFieldDialog(!isClose);
   };
 
+  const handleEndClick = () => {
+    let requestBody = {
+      userId: userData.id,
+      primaryTableName: tableName,
+      secondaryTableName: `${tableName}_Order_processing`,
+      secondaryColumns: fieldsForTable,
+    };
+    
+    postOrderBuilderData(requestBody, fieldsForTable);
+  };
+
+  const postOrderBuilderData = async (data, fieldsForTable) => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/user/createOrderTables",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.error) {
+        throw new Error(result.error);
+      } else {
+        dispatch(setNewOrderBuilder(fieldsForTable));
+        navigate("/catalog");
+      }
+    } catch (error) {
+    } finally {
+    }
+  };
+
   return (
     <div className="order-builder-container">
       <Toast ref={toast} />
@@ -123,9 +171,7 @@ const OrderBuilder = () => {
             setNewFieldName("");
           }}
         />
-        <Link to="/catalog">
-          <Button label="Завершить" />
-        </Link>
+        <Button onClick={handleEndClick} label="Завершить" />
       </div>
       <Dialog
         header="Добавить новое поле"
