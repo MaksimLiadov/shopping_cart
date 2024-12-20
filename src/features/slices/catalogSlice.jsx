@@ -1,17 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
-import catalogData from "../../catalog.json"
+import catalogData from "../../catalog.json";
 
 export const catalogSlice = createSlice({
   name: "catalog",
   initialState: {
-    catalogData
+    catalogData,
+    orderBuilder: {},
   },
   reducers: {
     setNewCatalog(state, action) {
       state.catalogData = action.payload;
-  },
+    },
+    setNewOrderBuilder(state, action) {
+      state.orderBuilder = action.payload;
+    },
   },
 });
 
-export const { setNewCatalog } = catalogSlice.actions;
+export const { setNewCatalog, setNewOrderBuilder } = catalogSlice.actions;
 export default catalogSlice.reducer;
