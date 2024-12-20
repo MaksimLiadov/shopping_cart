@@ -32,7 +32,6 @@ const BasketTable = () => {
 
   const handleRemoveAllProduct = () => {
     dispatch(removeAllProduct());
-    navigate("/", { replace: true });
   };
 
   const handleInputChange = (name, value) => {
@@ -108,7 +107,7 @@ const BasketTable = () => {
       </div>
       <div className="purchase-confirmation-buttons">
         <Button onClick={Purchase} label="Беру!" />
-        <Button onClick={handleRemoveAllProduct} label="Пожалуй, откажусь" />
+        <Button onClick={handleRemoveAllProduct} label="Отказаться" />
       </div>
       <Dialog
         header="Оформление заказа"
