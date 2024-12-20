@@ -1,6 +1,6 @@
 .MainContainer {
     height: 100%;
-    width: 100%;
+    width: calc(100% - 190px);
     display: grid;
     grid-template-columns: auto 100%;
 }

@@ -185,7 +185,7 @@ const OrderBuilder = () => {
         <p className="m-0">
           Введите название нового поля.
           <br />
-          Максимальная длина 50символов.
+          Максимальная длина 50 символов.
         </p>
         <div className="addFieldDialogСontrol">
           <InputText

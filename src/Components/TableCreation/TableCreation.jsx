@@ -165,6 +165,12 @@ const TableCreation = () => {
         navigate("/orderBuilder", { state: { tableName: tableName } });
       }
     } catch (error) {
+      toast.current.show({
+        severity: "error",
+        summary: "Ошибка",
+        detail: error.message,
+        life: 3000,
+      });
     } finally {
     }
   };
